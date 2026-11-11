@@ -762,6 +762,12 @@ function normalizeZone(zone: string | Zone): Zone {
     return FixedOffsetZone.instance(0);
   }
 
+  // moment-timezone ignores zones it has no data for (e.g. 'default') and keeps a valid UTC
+  // moment; luxon would otherwise produce an invalid DateTime.
+  if (!IANAZone.isValidZone(name)) {
+    return FixedOffsetZone.instance(0);
+  }
+
   let normalized = easyTzZoneCache.get(name);
 
   if (!normalized) {
